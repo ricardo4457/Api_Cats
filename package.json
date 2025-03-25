@@ -1,0 +1,20 @@
+{
+  "name": "api_cats",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/ricardo4457/Api_Cats#readme",
+  "bugs": {
+    "url": "https://github.com/ricardo4457/Api_Cats/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricardo4457/Api_Cats.git"
+  },
+  "license": "ISC",
+  "author": "Ricardo Vieira",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
