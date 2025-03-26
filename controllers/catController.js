@@ -24,7 +24,7 @@ const getTags = async (req, res) => {
 };
 
 // Function to filter cats based on tags
-const filterCats = async (req, res) => {
+const filterCatsByTag = async (req, res) => {
   const { tag, omit, total } = req.query;
 
   const request = new RequestFilterCats(tag, omit, total);
@@ -59,7 +59,7 @@ const filterCats = async (req, res) => {
 };
 
 // Function to match cats based on a string
-const matchCats = async (req, res) => {
+const matchTags = async (req, res) => {
   const { string } = req.query;
 
   const request = new RequestMatchCats(string);
@@ -73,9 +73,8 @@ const matchCats = async (req, res) => {
     const response = await axios.get("https://cataas.com/api/tags");
     const matchedTags = response.data.filter((tag) => tag.includes(string));
 
-    const tags = matchedTags.map((tagName) => new Tag(tagName));
 
-    res.status(200).json({ matchedTags, tags });
+    res.status(200).json({ matchedTags });
   } catch (error) {
     res.status(500).json({ error: "Failed to match tags" });
   }
@@ -83,6 +82,6 @@ const matchCats = async (req, res) => {
 
 module.exports = {
   getTags,
-  filterCats,
-  matchCats,
+  filterCatsByTag,
+  matchTags,
 };

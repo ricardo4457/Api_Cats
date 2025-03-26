@@ -1,6 +1,6 @@
 
 const express = require('express');
-const { getTags, filterCats, matchCats } = require('../controllers/catController');
+const { getTags, matchTags, filterCatsByTag } = require('../controllers/catController');
 
 const router = express.Router();
 
@@ -8,9 +8,9 @@ const router = express.Router();
 router.get('/tags', getTags);
 
 // Rota para filtrar gatos
-router.get('/cats/filter', filterCats);
+router.get('/cats/filter', filterCatsByTag);
 
 // Rota para buscar tags por substring
-router.get('/cats/match', matchCats);
+router.get('/cats/match', matchTags);
 
 module.exports = router;
