@@ -1,8 +1,14 @@
-const http = require('http');
-const app = require('./app');
 
-const port =  process.env.PORT || 3000
+const express = require('express');
+const catRoutes = require('./routes/catRoutes');
 
-const server = http.createServer(app);
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-server.listen(port);
+app.use(express.json());
+
+app.use('/api/v1', catRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
