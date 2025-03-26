@@ -1,5 +1,7 @@
 
 const express = require('express');
+const Cat = require("./models/Cat");
+const Tag = require("./models/Tag");
 const catRoutes = require('./routes/catRoutes');
 
 const app = express();
