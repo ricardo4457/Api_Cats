@@ -42,11 +42,17 @@ const filterCats = async (req, res) => {
     );
 
     const cats = catsData.map(
-      (catData) =>
-        new Cat(catData.id, catData.tags, catData.mimetype, catData.createdAt)
+      (catData) => 
+        new Cat(
+          catData.id, 
+          catData.tags, 
+          catData.mimetype, 
+          catData.createdAt,
+          `https://cataas.com/cat/${catData.id}`  
+        )
     );
 
-    res.status(200).json(cats);
+    res.status(200).json(cats); 
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch filtered cats" });
   }
