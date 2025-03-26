@@ -1,10 +1,18 @@
 const axios = require("axios");
 const Cat = require("../models/Cat");
 const Tag = require("../models/Tag");
+const RequestGetTags = require("./requests/RequestGetTags");
+const RequestFilterCats = require("./requests/RequestFilterCats");
+const RequestMatchCats = require("./requests/RequestMatchCats");
 
 // Function to get all tags and return them as Tag instances
 const getTags = async (req, res) => {
   try {
+    const request = new RequestGetTags(req.query);
+    if (!request.isValid()) {
+      return res.status(400).json({ error: "Invalid query parameters" });
+    }
+
     const response = await axios.get("https://cataas.com/api/tags");
 
     const tags = response.data.map((tagName) => new Tag(tagName));
@@ -19,8 +27,11 @@ const getTags = async (req, res) => {
 const filterCats = async (req, res) => {
   const { tag, omit, total } = req.query;
 
-  if (!tag || !omit || !total) {
-    return res.status(400).json({ error: "Missing required query parameters" });
+  const request = new RequestFilterCats(tag, omit, total);
+  if (!request.isValid()) {
+    return res
+      .status(400)
+      .json({ error: "Missing or invalid query parameters" });
   }
 
   try {
@@ -41,23 +52,24 @@ const filterCats = async (req, res) => {
   }
 };
 
-// Function to match tags based on a string
+// Function to match cats based on a string
 const matchCats = async (req, res) => {
   const { string } = req.query;
 
-  if (!string) {
+  const request = new RequestMatchCats(string);
+  if (!request.isValid()) {
     return res
       .status(400)
-      .json({ error: 'Missing required query parameter "string"' });
+      .json({ error: 'Missing or invalid query parameter "string"' });
   }
 
   try {
     const response = await axios.get("https://cataas.com/api/tags");
     const matchedTags = response.data.filter((tag) => tag.includes(string));
 
-    const tagInstances = matchedTags.map((tagName) => new Tag(tagName));
+    const tags = matchedTags.map((tagName) => new Tag(tagName));
 
-    res.status(200).json({ matchedTags, tagInstances });
+    res.status(200).json({ matchedTags, tags });
   } catch (error) {
     res.status(500).json({ error: "Failed to match tags" });
   }
