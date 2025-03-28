@@ -1,5 +1,5 @@
 const { SearchQuery, SearchResult } = require('../models');
-const { Sequelize } = require('sequelize');  // Add this line
+const { Sequelize } = require('sequelize');
 
 // Get top 10 most frequent search queries
 const getTopQueries = async (req, res) => {
@@ -76,7 +76,7 @@ const recordSearch = async (query, results = []) => {
     throw error;
   }
 };
-//Clicking any category will display cats matching that category.
+//Clicking any category will display cats matching that category
 const getCatsByCategory = async (req, res) => {
   try {
     const { tag } = req.params;
