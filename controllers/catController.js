@@ -1,6 +1,7 @@
 const axios = require("axios");
-const Cat = require("../models/cat");
-const Tag = require("../models/tag");
+const Cat = require("../api_models/cat");
+const Tag = require("../api_models/tag");
+const { recordSearch } = require("../controllers/statsController");
 const RequestGetTags = require("./requests/RequestGetTags");
 const RequestFilterCats = require("./requests/RequestFilterCats");
 const RequestMatchCats = require("./requests/RequestMatchCats");
@@ -42,17 +43,19 @@ const filterCatsByTag = async (req, res) => {
     );
 
     const cats = catsData.map(
-      (catData) => 
+      (catData) =>
         new Cat(
-          catData.id, 
-          catData.tags, 
-          catData.mimetype, 
+          catData.id,
+          catData.tags,
+          catData.mimetype,
           catData.createdAt,
-          `https://cataas.com/cat/${catData.id}`  
+          `https://cataas.com/cat/${catData.id}`
         )
     );
 
-    res.status(200).json(cats); 
+    await recordSearch(tag, catsData);
+
+    res.status(200).json(cats);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch filtered cats" });
   }
@@ -73,6 +76,7 @@ const matchTags = async (req, res) => {
     const response = await axios.get("https://cataas.com/api/tags");
     const matchedTags = response.data.filter((tag) => tag.includes(string));
 
+    await recordSearch(string);
 
     res.status(200).json({ matchedTags });
   } catch (error) {
