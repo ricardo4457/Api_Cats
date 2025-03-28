@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const catRoutes = require('./routes/catRoutes');
+const statsRoutes = require('./routes/statsRoutes');
 const cors = require('cors');
 
 const app = express();
@@ -19,6 +20,7 @@ app.options('*', cors(corsOptions));
 app.use(express.json());
 
 app.use(process.env.API_BASE_PATH || '/api/v1', catRoutes);
+app.use(process.env.API_BASE_PATH || '/api/v1', statsRoutes); 
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
