@@ -1,4 +1,5 @@
 const { SearchQuery, SearchResult } = require('../models');
+const { Sequelize } = require('sequelize');  // Add this line
 
 // Get top 10 most frequent search queries
 const getTopQueries = async (req, res) => {
@@ -81,11 +82,7 @@ const getCatsByCategory = async (req, res) => {
     const { tag } = req.params;
 
     const results = await SearchResult.findAll({
-      where: {
-        tags: {
-          [Sequelize.Op.contains]: [tag]
-        }
-      }
+      where: Sequelize.literal(`JSON_CONTAINS(tags, '"${tag}"')`)
     });
 
     const cats = results.map(result => ({
@@ -104,7 +101,6 @@ const getCatsByCategory = async (req, res) => {
     res.status(500).json({ error: 'Failed to get cats by category' });
   }
 };
-
  
  const recordSearchMiddleware = async (req, res) => {
    try {
