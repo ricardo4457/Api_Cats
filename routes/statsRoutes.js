@@ -2,6 +2,7 @@ const express = require('express');
 const { 
   getTopQueries, 
   getTopCategories, 
+  getCatsByCategory,
   recordSearchMiddleware 
 } = require('../controllers/statsController');
 
