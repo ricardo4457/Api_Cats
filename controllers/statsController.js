@@ -58,24 +58,40 @@ const recordSearch = async (query, results = []) => {
       await searchQuery.save();
     }
 
-    for (const result of results) {
-      await SearchResult.findOrCreate({
-        where: {
-          searchQueryId: searchQuery.id,
-          catId: result.id
-        },
-        defaults: {
-          tags: result.tags || []
-        }
+    const existingResults = await SearchResult.findAll({
+      where: {
+        searchQueryId: searchQuery.id
+      },
+      attributes: ['catId'] 
+    });
+
+    const existingCatIds = existingResults.map(r => r.catId);
+    const newResults = results.filter(result => 
+      !existingCatIds.includes(result.id)
+    );
+
+    for (const result of newResults) {
+      await SearchResult.create({
+        searchQueryId: searchQuery.id,
+        catId: result.id,
+        tags: result.tags || []
       });
     }
     
-    return { success: true };
+    return { 
+      success: true,
+      stats: {
+        totalResults: results.length,
+        newResultsAdded: newResults.length,
+        duplicatesSkipped: results.length - newResults.length
+      }
+    };
   } catch (error) {
     console.error('Error recording search:', error);
     throw error;
   }
 };
+
 //Clicking any category will display cats matching that category
 const getCatsByCategory = async (req, res) => {
   try {
@@ -102,15 +118,18 @@ const getCatsByCategory = async (req, res) => {
   }
 };
  
- const recordSearchMiddleware = async (req, res) => {
-   try {
-     const { query } = req.body;
-     const result = await recordSearch(query);
-     res.status(200).json(result);
-   } catch (error) {
-     res.status(500).json({ error: 'Failed to record search' });
-   }
- };
+const recordSearchMiddleware = async (req, res) => {
+  try {
+    const { query, results = [] } = req.body;
+    const result = await recordSearch(query, results);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to record search',
+      details: error.message 
+    });
+  }
+};
  
 
 module.exports = {
