@@ -43,7 +43,9 @@ const getTopCategories = async (req, res) => {
 
 // Record a new search query
 const recordSearch = async (query, results = []) => {
-  if (!query) throw new Error("Query parameter is required");
+  if (!query) {
+    throw new Error("Query parameter is required");
+  }
 
   try {
     const [searchQuery, created] = await SearchQuery.findOrCreate({
@@ -57,20 +59,24 @@ const recordSearch = async (query, results = []) => {
     }
 
     const existingResults = await SearchResult.findAll({
-      where: { searchQueryId: searchQuery.id },
+      where: {
+        searchQueryId: searchQuery.id,
+      },
       attributes: ["catId"],
     });
-    const existingCatIds = existingResults.map((r) => r.catId);
-    const newResults = results.filter((result) => !existingCatIds.includes(result.id));
 
-    const creationPromises = newResults.map((result) => 
-      SearchResult.create({
+    const existingCatIds = existingResults.map((r) => r.catId);
+    const newResults = results.filter(
+      (result) => !existingCatIds.includes(result.id)
+    );
+
+    for (const result of newResults) {
+      await SearchResult.create({
         searchQueryId: searchQuery.id,
         catId: result.id,
         tags: result.tags || [],
-      })
-    );
-    await Promise.all(creationPromises);
+      });
+    }
 
     return {
       success: true,
@@ -78,12 +84,8 @@ const recordSearch = async (query, results = []) => {
         totalResults: results.length,
         newResultsAdded: newResults.length,
         duplicatesSkipped: results.length - newResults.length,
-        searchQueryId: searchQuery.id,
-        query: searchQuery.query,
-        searchCount: searchQuery.count
-      }
+      },
     };
-
   } catch (error) {
     console.error("Error recording search:", error);
     throw error;
