@@ -58,24 +58,31 @@ const recordSearch = async (query, results = []) => {
       await searchQuery.save();
     }
 
+    const resultCatIds = results.map((r) => r.id);
     const existingResults = await SearchResult.findAll({
       where: {
         searchQueryId: searchQuery.id,
+        catId: resultCatIds,
       },
       attributes: ["catId"],
     });
 
-    const existingCatIds = existingResults.map((r) => r.catId);
+    const existingCatIds = new Set(existingResults.map((r) => r.catId));
     const newResults = results.filter(
-      (result) => !existingCatIds.includes(result.id)
+      (result) => !existingCatIds.has(result.id)
     );
 
-    for (const result of newResults) {
-      await SearchResult.create({
-        searchQueryId: searchQuery.id,
-        catId: result.id,
-        tags: result.tags || [],
-      });
+    if (newResults.length > 0) {
+      await SearchResult.bulkCreate(
+        newResults.map((result) => ({
+          searchQueryId: searchQuery.id,
+          catId: result.id,
+          tags: result.tags || [],
+        })),
+        {
+          ignoreDuplicates: true,
+        }
+      );
     }
 
     return {
