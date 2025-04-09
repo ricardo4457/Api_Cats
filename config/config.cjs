@@ -5,7 +5,7 @@ module.exports = {
     username: 'root',
     password: 'admin123',
     database: 'cat_search_db',
-    host: 'localhost',
+    host: 'mysql',
     dialect: 'mysql',
   },
 }
