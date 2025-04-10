@@ -18,4 +18,4 @@ RUN npm install -g sequelize-cli
 EXPOSE 3000
 
 # Run migrations and start the app
-CMD ["sh", "-c", "npx sequelize db:migrate && npm run dev"]
+CMD ["sh", "-c", "npx sequelize db:migrate && node server.js"]
