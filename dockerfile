@@ -15,7 +15,7 @@ COPY . .
 # Install sequelize-cli globally (optional, can also use npx)
 RUN npm install -g sequelize-cli
 
-EXPOSE 3000
+EXPOSE 3000:3000
 
 # Run migrations and start the app
 CMD ["sh", "-c", "npx sequelize db:migrate && node server.js"]
