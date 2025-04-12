@@ -7,7 +7,7 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://192.168.1.72:5173',
+  origin: process.env.CORS_ORIGIN || 'http://192.168.1.75:5173',
   methods: (process.env.CORS_METHODS || 'GET,POST,PUT,DELETE').split(','),
   allowedHeaders: (process.env.CORS_ALLOWED_HEADERS || 'Content-Type,Authorization').split(','),
   credentials: process.env.CORS_CREDENTIALS === 'true',
