@@ -7,21 +7,23 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  methods: process.env.CORS_METHODS.split(','),
-  allowedHeaders: process.env.CORS_ALLOWED_HEADERS.split(','),
+  origin: process.env.CORS_ORIGIN || 'http://192.168.1.72:5173',
+  methods: (process.env.CORS_METHODS || 'GET,POST,PUT,DELETE').split(','),
+  allowedHeaders: (process.env.CORS_ALLOWED_HEADERS || 'Content-Type,Authorization').split(','),
   credentials: process.env.CORS_CREDENTIALS === 'true',
   optionsSuccessStatus: parseInt(process.env.CORS_OPTIONS_SUCCESS_STATUS) || 200
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); 
 app.use(express.json());
 
-app.use(process.env.API_BASE_PATH || '/api/v1', catRoutes);
-app.use(process.env.API_BASE_PATH || '/api/v1', statsRoutes); 
+const basePath = process.env.API_BASE_PATH || '/api/v1';
+app.use(basePath, catRoutes);
+app.use(basePath, statsRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`CORS enabled for origin: ${corsOptions.origin}`);
 });
